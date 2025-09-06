@@ -44,7 +44,8 @@ const Diagnostics: React.FC = () => {
         'Cough suppressants for persistent cough',
         'Warm liquids and salt water gargles for sore throat'
       ],
-      bodySystem: 'Respiratory'
+      bodySystem: 'Respiratory',
+      severity: 'low'
     };
     
     setDiagnosticResult(mockResult);

@@ -5,6 +5,12 @@ import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import FamilyMemberCard from '../components/profile/FamilyMemberCard';
 import { User as UserType, FamilyMember } from '../types';
+// Define UserRole enum or import it as a value, not just a type
+enum UserRole {
+  User = 'User',
+  Admin = 'Admin',
+  // add other roles as needed
+}
 
 const Profile: React.FC = () => {
   // Mock user data
@@ -15,6 +21,8 @@ const Profile: React.FC = () => {
     phone: '+1 (555) 123-4567',
     address: '123 Healthcare St, Medical City, CA 94103',
     bloodGroup: 'O+',
+    role: UserRole.User, // or whatever default role fits your app
+    verified: false, // or true, depending on your logic
   });
 
   // Mock family members data
