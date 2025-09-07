@@ -64,20 +64,22 @@ const Home: React.FC = () => {
               Manage your health records, get AI-powered insights, and connect with healthcare providers - all in one secure place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-400">
-              <Button
-                className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white hover:scale-105 transform transition-all duration-300 backdrop-blur-sm font-semibold px-8 py-4 rounded-full"
-              >
-                <span className="flex items-center">
-                  Get Started
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Button>
+              <button className="group relative border-2 border-white/30 text-white hover:border-white hover:scale-105 transform transition-all duration-300 font-semibold px-8 py-4 rounded-lg overflow-hidden bg-gradient-to-r backdrop-blur-sm">
+              <div className="absolute inset-0 rounded-lg p-0.5 bg-gradient-to-r from-pink-400 via-purple-500 to-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="h-full w-full rounded-md bg-black/20 backdrop-blur-sm group-hover:bg-gradient-to-r group-hover:from-pink-500/30 group-hover:via-purple-500/30 group-hover:to-cyan-500/30 transition-all duration-500"></div>
+              </div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-pink-400 via-purple-500 to-cyan-400 rounded-lg blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500"></div>
+              <span className="relative flex items-center justify-center bg-gradient-to-r from-pink-300 via-purple-300 to-cyan-300 bg-clip-text group-hover:text-transparent transition-all duration-300">
+                Get Started
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </button>
 
               <Button 
                 className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white hover:scale-105 transform transition-all duration-300 backdrop-blur-sm font-semibold px-8 py-4 rounded-full"
               >
                 <span className="flex items-center">
-                  <Activity className="mr-2 h-5 w-5" />
+                  <Activity className="mr-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   Learn More
                 </span>
               </Button>
