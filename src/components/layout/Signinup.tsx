@@ -73,9 +73,9 @@ const SignInUp: React.FC<SignInUpProps> = ({ isOpen, onClose, onAuthSuccess }) =
 
     // Simulate API call
     setTimeout(() => {
-      // Mock successful authentication
+      // Use actual form data for authentication
       const user = {
-        name: isSignUp ? formData.name : 'John Doe',
+        name: isSignUp ? formData.name : formData.email.split('@')[0], // Use name from signup or email prefix for signin
         email: formData.email
       };
       

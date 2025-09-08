@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Stethoscope, FileText, Guitar as Hospital, ArrowRight, ShieldCheck, Heart, Sparkles, Activity } from 'lucide-react';
+import { User, Stethoscope, FileText, Building2 as Hospital, ArrowRight, ShieldCheck, Heart, Sparkles, Activity } from 'lucide-react';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import FeatureCard from '../components/home/FeatureCard';

@@ -19,7 +19,6 @@ const Header: React.FC = () => {
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home size={20} /> },
-    ...(user ? [{ name: 'Profile', path: '/profile', icon: <User size={20} /> }] : []),
     { name: 'Diagnostics', path: '/diagnostics', icon: <Stethoscope size={20} /> },
     { name: 'Records', path: '/records', icon: <FileText size={20} /> },
     { name: 'Hospitals', path: '/hospitals', icon: <Hospital size={20} /> },
@@ -28,14 +27,18 @@ const Header: React.FC = () => {
   const handleAuthSuccess = (userData: AuthUser) => {
     setUser(userData);
     setIsAuthOpen(false);
-    // You can also store user data in localStorage or context here
+    // Store user data in localStorage
     localStorage.setItem('user', JSON.stringify(userData));
+    // Dispatch custom event to update other components
+    window.dispatchEvent(new CustomEvent('authChange', { detail: userData }));
   };
 
   const handleSignOut = () => {
     setUser(null);
     setIsUserMenuOpen(false);
     localStorage.removeItem('user');
+    // Dispatch custom event to update other components
+    window.dispatchEvent(new CustomEvent('authChange', { detail: null }));
   };
 
   // Load user from localStorage on component mount

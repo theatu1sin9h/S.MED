@@ -1,13 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Stethoscope, Mail, Phone, MapPin, Heart, Shield, Clock, Users } from 'lucide-react';
 
+interface AuthUser {
+  name: string;
+  email: string;
+}
+
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  // Load user from localStorage
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Error parsing saved user data:', error);
+        localStorage.removeItem('user');
+      }
+    }
+
+    // Listen for storage changes to update footer when user logs in/out
+    const handleStorageChange = () => {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (error) {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events from same tab
+    const handleAuthChange = (event: CustomEvent) => {
+      setUser(event.detail);
+    };
+
+    window.addEventListener('authChange', handleAuthChange as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange as EventListener);
+    };
+  }, []);
 
   const quickLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Profile', path: '/profile' },
+    ...(user ? [{ name: 'Profile', path: '/profile' }] : []),
     { name: 'Diagnostics', path: '/diagnostics' },
     { name: 'Records', path: '/records' },
     { name: 'Hospitals', path: '/hospitals' },
