@@ -14,135 +14,184 @@ import {
   Cell,
 } from "recharts";
 
-// Define types
 type HealthData = {
   steps: number;
   calories: number;
   water: number;
   sleep: number;
   heartRate: number;
-  stress?: number;
-  wellness?: number;
-  mood?: number;
+  mentalHealth: "Stressed" | "Calm" | "Thriving";
 };
 
-// Colors for Pie charts
-const COLORS = ["#1D4ED8", "#10B981", "#F59E0B", "#EF4444"];
+const COLORS = ["#1D4ED8", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"];
 
 export default function MediTrack(): JSX.Element {
-  const [data, setData] = useState<HealthData>(() => {
-    return (
-      JSON.parse(localStorage.getItem("healthData") || "null") || {
-        steps: 500,
-        calories: 200,
-        water: 4,
-        sleep: 7,
-        heartRate: 70,
-        stress: 3,
-        wellness: 4,
-        mood: 4,
-      }
-    );
+  const today = new Date().toISOString().split("T")[0];
+
+  const [history, setHistory] = useState<Record<string, HealthData>>(() => {
+    return JSON.parse(localStorage.getItem("healthHistory") || "{}") || {};
   });
 
-  const [showGraph, setShowGraph] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [showGraphs, setShowGraphs] = useState(false);
 
-  // Save automatically
-  useEffect(() => {
-    localStorage.setItem("healthData", JSON.stringify(data));
-  }, [data]);
-
-  const handleChange = (field: keyof HealthData, value: string) => {
-    setData({ ...data, [field]: Number(value) });
+  const defaultData: HealthData = {
+    steps: 500,
+    calories: 200,
+    water: 4,
+    sleep: 7,
+    heartRate: 70,
+    mentalHealth: "Calm",
   };
 
-  // Prepare data for charts
-  const barChartData = [
+  const data = history[selectedDate] || defaultData;
+
+  useEffect(() => {
+    localStorage.setItem("healthHistory", JSON.stringify(history));
+  }, [history]);
+
+  const handleChange = (field: keyof HealthData, value: string) => {
+    setHistory({
+      ...history,
+      [selectedDate]: {
+        ...data,
+        [field]: field === "mentalHealth" ? value : Number(value),
+      },
+    });
+  };
+
+  // Yesterday date
+  const yesterday = new Date(new Date(selectedDate).getTime() - 86400000)
+    .toISOString()
+    .split("T")[0];
+  const yesterdayData = history[yesterday] || defaultData;
+
+  // Convert mental health into a numeric scale for comparison
+  const moodScale = { Stressed: 1, Calm: 2, Thriving: 3 };
+
+  // Data for separate bar charts
+  const metrics = [
+    { key: "steps", label: "Steps", unit: "" },
+    { key: "calories", label: "Calories", unit: " kcal" },
+    { key: "water", label: "Water", unit: " glasses" },
+    { key: "sleep", label: "Sleep", unit: " hrs" },
+    { key: "heartRate", label: "Heart Rate", unit: " bpm" },
+    { key: "mentalHealth", label: "Mental Health", unit: "" },
+  ];
+
+  // Pie chart data
+  const todayPieData = [
     { name: "Steps", value: data.steps },
     { name: "Calories", value: data.calories },
+    { name: "Water", value: data.water },
+    { name: "Sleep", value: data.sleep },
     { name: "Heart Rate", value: data.heartRate },
+    { name: "Mental Health", value: moodScale[data.mentalHealth] },
   ];
 
-  const pieData = [
-    { name: "Water (glasses)", value: data.water },
-    { name: "Sleep (hrs)", value: data.sleep },
-  ];
-
-  const mentalData = [
-    { name: "Stress", value: data.stress || 0 },
-    { name: "Wellness", value: data.wellness || 0 },
-    { name: "Mood", value: data.mood || 0 },
+  const yesterdayPieData = [
+    { name: "Steps", value: yesterdayData.steps },
+    { name: "Calories", value: yesterdayData.calories },
+    { name: "Water", value: yesterdayData.water },
+    { name: "Sleep", value: yesterdayData.sleep },
+    { name: "Heart Rate", value: yesterdayData.heartRate },
+    { name: "Mental Health", value: moodScale[yesterdayData.mentalHealth] },
   ];
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-6 max-w-2xl mx-auto">
+    <div className="bg-white shadow-lg rounded-2xl p-6 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold text-blue-600 mb-4">📊 MediTrack</h2>
 
+      {/* Date Selector */}
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-1">📅 Select Date</label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="w-full border rounded-lg p-2"
+        />
+      </div>
+
       {/* Input fields */}
-      {Object.keys(data)
-        .filter((key) => key !== "stress" && key !== "wellness" && key !== "mood")
-        .map((field) => (
-          <div key={field} className="mb-4">
-            <label className="block text-gray-700 capitalize mb-1">{field}</label>
+      {metrics.map((m) =>
+        m.key === "mentalHealth" ? (
+          <div key={m.key} className="mb-4">
+            <label className="block text-gray-700 mb-1">Mental Health</label>
+            <select
+              value={data.mentalHealth}
+              onChange={(e) => handleChange("mentalHealth", e.target.value)}
+              className="w-full border rounded-lg p-2"
+            >
+              <option value="Stressed">Stressed</option>
+              <option value="Calm">Calm</option>
+              <option value="Thriving">Thriving</option>
+            </select>
+          </div>
+        ) : (
+          <div key={m.key} className="mb-4">
+            <label className="block text-gray-700 mb-1">{m.label}</label>
             <input
               type="number"
-              value={data[field as keyof HealthData]}
-              onChange={(e) => handleChange(field as keyof HealthData, e.target.value)}
+              value={data[m.key as keyof HealthData] as number}
+              onChange={(e) => handleChange(m.key as keyof HealthData, e.target.value)}
               className="w-full border rounded-lg p-2"
             />
           </div>
-        ))}
+        )
+      )}
 
+      {/* Show Graphs Button */}
       <button
-        onClick={() => setShowGraph(true)}
+        onClick={() => setShowGraphs(true)}
         className="mt-4 mb-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
       >
-        View Your MediTrack
+        Show My Health Graphs
       </button>
 
-      {/* Show current values */}
-      <div className="mt-4 text-left">
-        <p>🚶 Steps: <b>{data.steps}</b></p>
-        <p>🔥 Calories: <b>{data.calories}</b></p>
-        <p>❤️ Heart Rate: <b>{data.heartRate}</b> bpm</p>
-        <p>💧 Water: <b>{data.water}</b> glasses</p>
-        <p>😴 Sleep: <b>{data.sleep}</b> hrs</p>
-      </div>
+      {/* Graphs Section */}
+      {showGraphs && (
+        <div className="mt-8 space-y-12">
+          {/* 6 Bar Graphs */}
+          {metrics.map((m, idx) => {
+            const barData = [
+              { name: "Yesterday", value: m.key === "mentalHealth" ? moodScale[yesterdayData.mentalHealth] : yesterdayData[m.key as keyof HealthData] },
+              { name: "Today", value: m.key === "mentalHealth" ? moodScale[data.mentalHealth] : data[m.key as keyof HealthData] },
+            ];
 
-      {/* Charts */}
-      {showGraph && (
-        <div className="mt-8 space-y-8">
-          {/* Bar Chart */}
-          <div className="bg-white p-4 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-blue-600">📊 Health Overview</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#1D4ED8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+            return (
+              <div key={m.key} className="bg-white p-4 rounded-2xl shadow-lg">
+                <h3 className="text-xl font-bold mb-4 text-blue-600">{m.label}</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={barData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill={COLORS[idx % COLORS.length]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            );
+          })}
 
-          {/* Pie Chart for Water & Sleep */}
+          {/* Today Pie Chart */}
           <div className="bg-white p-4 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-green-600">💧 Water & Sleep</h3>
+            <h3 className="text-xl font-bold mb-4 text-green-600">🍏 Today’s Health Summary</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={todayPieData}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={100}
                   label
                 >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {todayPieData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -151,22 +200,22 @@ export default function MediTrack(): JSX.Element {
             </ResponsiveContainer>
           </div>
 
-          {/* Pie Chart for Mental Health */}
+          {/* Yesterday Pie Chart */}
           <div className="bg-white p-4 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-purple-600">🧠 Mental Health</h3>
+            <h3 className="text-xl font-bold mb-4 text-red-600">🍎 Yesterday’s Health Summary</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={mentalData}
+                  data={yesterdayPieData}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={100}
                   label
                 >
-                  {mentalData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {yesterdayPieData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -179,4 +228,3 @@ export default function MediTrack(): JSX.Element {
     </div>
   );
 }
-

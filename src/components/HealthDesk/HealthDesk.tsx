@@ -6,14 +6,14 @@ export default function HealthDesk() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   return (
-    <section className="p-10 text-center bg-blue-50 min-h-screen">
+    <section className="p-10 text-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <h1 className="text-4xl font-bold text-blue-700 mb-6">🏥 Health Desk</h1>
       <p className="text-gray-600 mb-8">
         Your one-stop platform for health tracking & guidance
       </p>
 
       <div className="flex justify-center gap-6">
-        <button
+        <button 
           onClick={() => setActiveTab("track")}
           className="bg-blue-600 text-white px-6 py-3 rounded-xl shadow-md hover:bg-blue-700"
         >
