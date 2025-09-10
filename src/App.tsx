@@ -8,6 +8,8 @@ import Profile from './pages/Profile';
 import Diagnostics from './pages/Diagnostics';
 import Records from './pages/Records';
 import Hospitals from './pages/Hospitals';
+import HealthDesk from "./components/HealthDesk/HealthDesk";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
               <Route path="/diagnostics" element={<Diagnostics />} />
               <Route path="/records" element={<Records />} />
               <Route path="/hospitals" element={<Hospitals />} />
+              <Route path="/healthdesk" element={<HealthDesk />} />
             </Routes>
           </main>
           <Footer />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Sun, Moon, User, Stethoscope, FileText, Building2 as Hospital, Home, LogOut, UserCircle } from 'lucide-react';
+import { Menu, X, Sun, Moon, User, Stethoscope, FileText, Building2 as Hospital, Activity, Home, LogOut, UserCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import SignInUp from './SignInUp';
@@ -22,6 +22,7 @@ const Header: React.FC = () => {
     { name: 'Diagnostics', path: '/diagnostics', icon: <Stethoscope size={20} /> },
     { name: 'Records', path: '/records', icon: <FileText size={20} /> },
     { name: 'Hospitals', path: '/hospitals', icon: <Hospital size={20} /> },
+    { name: 'HealthDesk',path: '/healthdesk', icon: <Activity size={20}/>},
   ];
 
   const handleAuthSuccess = (userData: AuthUser) => {
