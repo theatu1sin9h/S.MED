@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
   const quickLinks = [
     { name: 'Home', path: '/' },
     ...(user ? [{ name: 'Profile', path: '/profile' }] : []),
-    { name: 'Diagnostics', path: '/diagnostics' },
+    { name: 'Chatbot', path: '/ai_Chatbot' },
     { name: 'Records', path: '/records' },
     { name: 'Hospitals', path: '/hospitals' },
   ];

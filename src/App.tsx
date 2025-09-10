@@ -5,10 +5,10 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
-import Diagnostics from './pages/Diagnostics';
 import Records from './pages/Records';
 import Hospitals from './pages/Hospitals';
 import HealthDesk from "./components/HealthDesk/HealthDesk";
+import AI_Chatbot from './pages/AI_Chatbot';
 
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/diagnostics" element={<Diagnostics />} />
+              <Route path="/ai_Chatbot" element={<AI_Chatbot />} />
               <Route path="/records" element={<Records />} />
               <Route path="/hospitals" element={<Hospitals />} />
               <Route path="/healthdesk" element={<HealthDesk />} />
